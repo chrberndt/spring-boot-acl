@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: spring-boot-docker-compose
+  jpa:
+    hibernate:
+      # CAUTION: any data entered will be dropped when the application is started
+      ddl-auto: create
+  sql:
+    init:
+      # Force schema creation for non-embedded database
+      mode: always
