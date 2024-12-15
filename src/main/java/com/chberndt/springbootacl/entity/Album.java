@@ -11,7 +11,9 @@ public class Album {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
+
     private String artist;
+
     private String title;
 
     protected Album() {}
