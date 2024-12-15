@@ -43,10 +43,6 @@ public class DataSourcePopulator implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-//		Assert.notNull(this.mutableAclService, "mutableAclService required");
-//		Assert.notNull(this.template, "dataSource required");
-//		Assert.notNull(this.tt, "platformTransactionManager required");
-
 		// Set a user account that will initially own all the created data
 		Authentication authRequest = new UsernamePasswordAuthenticationToken("rod", "koala",
 				AuthorityUtils.createAuthorityList("ROLE_IGNORED"));
