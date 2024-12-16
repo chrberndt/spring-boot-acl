@@ -24,32 +24,33 @@ public class SpringBootAclApplication {
 		return (args) -> {
 
 			// fetch all albums
-//			log.info("Albums found with findAll():");
-//			log.info("-------------------------------");
-//			repository.findAll().forEach(album -> {
-//				log.info(album.toString());
-//			});
-//			log.info("");
-//
-//			// fetch an individual album by ID
-//			Album album = repository.findById(1L);
-//			if (album != null) {
-//				log.info("Album found with findById(1L):");
-//				log.info("--------------------------------");
-//				log.info(album.toString());
-//				log.info("");
-//			} else {
-//				log.info("No album found with findById(1L):");
-//				log.info("--------------------------------");
-//			}
-//
-//			// fetch albums by artist
-//			log.info("Album found with findByArtist('Beastie Boys'):");
-//			log.info("--------------------------------------------");
-//			repository.findByArtist("Beastie Boys").forEach(beastieBoysAlbum -> {
-//				log.info(beastieBoysAlbum.toString());
-//			});
-//			log.info("");
+			// log.info("Albums found with findAll():");
+			// log.info("-------------------------------");
+			// repository.findAll().forEach(album -> {
+			// log.info(album.toString());
+			// });
+			// log.info("");
+			//
+			// // fetch an individual album by ID
+			// Album album = repository.findById(1L);
+			// if (album != null) {
+			// log.info("Album found with findById(1L):");
+			// log.info("--------------------------------");
+			// log.info(album.toString());
+			// log.info("");
+			// } else {
+			// log.info("No album found with findById(1L):");
+			// log.info("--------------------------------");
+			// }
+			//
+			// // fetch albums by artist
+			// log.info("Album found with findByArtist('Beastie Boys'):");
+			// log.info("--------------------------------------------");
+			// repository.findByArtist("Beastie Boys").forEach(beastieBoysAlbum -> {
+			// log.info(beastieBoysAlbum.toString());
+			// });
+			// log.info("");
 		};
 	}
+
 }

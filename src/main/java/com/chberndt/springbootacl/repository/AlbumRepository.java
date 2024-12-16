@@ -11,18 +11,19 @@ import java.util.List;
 
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-    @PostFilter("hasPermission(filterObject, 'READ')")
-    List<Album> findAll();
+	@PostFilter("hasPermission(filterObject, 'READ')")
+	List<Album> findAll();
 
-    @PostAuthorize("hasPermission(returnObject, 'READ')")
-    List<Album> findByArtist(String artist);
+	@PostAuthorize("hasPermission(returnObject, 'READ')")
+	List<Album> findByArtist(String artist);
 
-    @PostFilter("hasPermission(filterObject, 'READ')")
-    List<Album> findByTitle(String title);
+	@PostFilter("hasPermission(filterObject, 'READ')")
+	List<Album> findByTitle(String title);
 
-    @PostFilter("hasPermission(filterObject, 'READ')")
-    Album findById(long id);
+	@PostFilter("hasPermission(filterObject, 'READ')")
+	Album findById(long id);
 
-//    @PreAuthorize("hasPermission(#album, 'WRITE')")
-    Album save(@Param("album")Album album);
+	// @PreAuthorize("hasPermission(#album, 'WRITE')")
+	Album save(@Param("album") Album album);
+
 }

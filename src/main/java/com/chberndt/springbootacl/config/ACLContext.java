@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionCacheOptimizer;
@@ -27,56 +26,60 @@ import javax.sql.DataSource;
 @EnableAutoConfiguration
 public class ACLContext {
 
-    @Autowired
-    DataSource dataSource;
+	@Autowired
+	DataSource dataSource;
 
-    @Bean
-    public SpringCacheBasedAclCache aclCache() {
-        final ConcurrentMapCache aclCache = new ConcurrentMapCache("acl_cache");
-        return new SpringCacheBasedAclCache(aclCache, permissionGrantingStrategy(), aclAuthorizationStrategy());
-    }
+	@Bean
+	public SpringCacheBasedAclCache aclCache() {
+		final ConcurrentMapCache aclCache = new ConcurrentMapCache("acl_cache");
+		return new SpringCacheBasedAclCache(aclCache, permissionGrantingStrategy(), aclAuthorizationStrategy());
+	}
 
-    @Bean
-    public PermissionGrantingStrategy permissionGrantingStrategy() {
-        return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
-    }
+	@Bean
+	public PermissionGrantingStrategy permissionGrantingStrategy() {
+		return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
+	}
 
-    @Bean
-    public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_ADMIN"));
-    }
+	@Bean
+	public AclAuthorizationStrategy aclAuthorizationStrategy() {
+		return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_ADMIN"));
+	}
 
-    @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler() {
-        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService());
-        expressionHandler.setPermissionEvaluator(permissionEvaluator);
-        expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService()));
-        return expressionHandler;
-    }
+	@Bean
+	public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler() {
+		DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+		AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService());
+		expressionHandler.setPermissionEvaluator(permissionEvaluator);
+		expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService()));
+		return expressionHandler;
+	}
 
-    @Bean
-    public LookupStrategy lookupStrategy() {
-        return new BasicLookupStrategy(dataSource, aclCache(), aclAuthorizationStrategy(), new ConsoleAuditLogger());
-    }
+	@Bean
+	public LookupStrategy lookupStrategy() {
+		return new BasicLookupStrategy(dataSource, aclCache(), aclAuthorizationStrategy(), new ConsoleAuditLogger());
+	}
 
-    @Bean
-    public JdbcMutableAclService aclService() {
+	@Bean
+	public JdbcMutableAclService aclService() {
 
-        JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
+		JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(dataSource, lookupStrategy(),
+				aclCache());
 
-        // For MySQL ONLY
-        // see: https://stackoverflow.com/questions/54859029/spring-security-acl-object/56275135#56275135
-        // TODO: Dynamically disable for testing
-//        jdbcMutableAclService.setClassIdentityQuery("SELECT @@IDENTITY");
-//        jdbcMutableAclService.setSidIdentityQuery("SELECT @@IDENTITY");
+		// For MySQL ONLY
+		// see:
+		// https://stackoverflow.com/questions/54859029/spring-security-acl-object/56275135#56275135
+		// TODO: Dynamically disable for testing
+		jdbcMutableAclService.setClassIdentityQuery("SELECT @@IDENTITY");
+		jdbcMutableAclService.setSidIdentityQuery("SELECT @@IDENTITY");
 
-        // For PostgreSQL use: (not tested yet)
-        // see: https://stackoverflow.com/questions/54859029/spring-security-acl-object/56275135#56275135
-        // jdbcMutableAclService.setSidIdentityQuery("SELECT currval('acl_sid_id_seq')");
-        // jdbcMutableAclService.setClassIdentityQuery("SELECT currval('acl_class_id_seq')");
+		// For PostgreSQL use: (not tested yet)
+		// see:
+		// https://stackoverflow.com/questions/54859029/spring-security-acl-object/56275135#56275135
+		// jdbcMutableAclService.setSidIdentityQuery("SELECT currval('acl_sid_id_seq')");
+		// jdbcMutableAclService.setClassIdentityQuery("SELECT
+		// currval('acl_class_id_seq')");
 
-        return jdbcMutableAclService;
-    }
+		return jdbcMutableAclService;
+	}
 
 }

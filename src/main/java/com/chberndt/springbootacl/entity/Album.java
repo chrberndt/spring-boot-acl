@@ -8,37 +8,37 @@ import jakarta.persistence.Id;
 @Entity
 public class Album {
 
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    private String artist;
+	private String artist;
 
-    private String title;
+	private String title;
 
-    protected Album() {}
+	protected Album() {
+	}
 
-    public Album(String artist, String title) {
-        this.artist = artist;
-        this.title = title;
-    }
+	public Album(String artist, String title) {
+		this.artist = artist;
+		this.title = title;
+	}
 
-    @Override
-    public String toString() {
-        return String.format(
-                "Album[id=%d, artist='%s', title='%s']",
-                id, artist, title);
-    }
+	@Override
+	public String toString() {
+		return String.format("Album[id=%d, artist='%s', title='%s']", id, artist, title);
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getArtist() {
-        return artist;
-    }
+	public String getArtist() {
+		return artist;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
+
 }

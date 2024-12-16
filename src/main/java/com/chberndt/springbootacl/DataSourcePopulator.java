@@ -60,39 +60,23 @@ public class DataSourcePopulator implements InitializingBean {
 			System.out.println("Failed to drop tables: " + ex.getMessage());
 		}
 
-		this.template.execute("CREATE TABLE acl_sid("
-				+ "id BIGINT NOT NULL AUTO_INCREMENT,"
-				+ "principal TINYINT NOT NULL,"
-				+ "sid VARCHAR(100) NOT NULL,"
-				+ "PRIMARY KEY (id),"
+		this.template.execute("CREATE TABLE acl_sid(" + "id BIGINT NOT NULL AUTO_INCREMENT,"
+				+ "principal TINYINT NOT NULL," + "sid VARCHAR(100) NOT NULL," + "PRIMARY KEY (id),"
 				+ "CONSTRAINT UNIQUE_UK_1 UNIQUE(sid,principal));");
-		this.template.execute("CREATE TABLE acl_class("
-				+ "id BIGINT NOT NULL AUTO_INCREMENT,"
-				+ "class VARCHAR(100) NOT NULL,"
-				+ "class_id_type VARCHAR(100),"
-				+ "PRIMARY KEY (id),"
-				+ "CONSTRAINT UNIQUE_UK_2 UNIQUE(class));");
-		this.template.execute("CREATE TABLE acl_object_identity("
-				+ "id BIGINT NOT NULL AUTO_INCREMENT,"
-				+ "object_id_class BIGINT NOT NULL,"
-				+ "object_id_identity VARCHAR(36) NOT NULL,"
-				+ "parent_object BIGINT,"
-				+ "owner_sid BIGINT,"
-				+ "entries_inheriting TINYINT NOT NULL,"
-				+ "PRIMARY KEY (id),"
-				+ "CONSTRAINT UNIQUE_UK_3 UNIQUE(object_id_class,object_id_identity),"
+		this.template
+			.execute("CREATE TABLE acl_class(" + "id BIGINT NOT NULL AUTO_INCREMENT," + "class VARCHAR(100) NOT NULL,"
+					+ "class_id_type VARCHAR(100)," + "PRIMARY KEY (id)," + "CONSTRAINT UNIQUE_UK_2 UNIQUE(class));");
+		this.template.execute("CREATE TABLE acl_object_identity(" + "id BIGINT NOT NULL AUTO_INCREMENT,"
+				+ "object_id_class BIGINT NOT NULL," + "object_id_identity VARCHAR(36) NOT NULL,"
+				+ "parent_object BIGINT," + "owner_sid BIGINT," + "entries_inheriting TINYINT NOT NULL,"
+				+ "PRIMARY KEY (id)," + "CONSTRAINT UNIQUE_UK_3 UNIQUE(object_id_class,object_id_identity),"
 				+ "CONSTRAINT FOREIGN_FK_1 FOREIGN KEY(parent_object)REFERENCES acl_object_identity(id),"
 				+ "CONSTRAINT FOREIGN_FK_2 FOREIGN KEY(object_id_class)REFERENCES acl_class(id),"
 				+ "CONSTRAINT FOREIGN_FK_3 FOREIGN KEY(owner_sid)REFERENCES acl_sid(id));");
-		this.template.execute("CREATE TABLE acl_entry("
-				+ "id BIGINT NOT NULL AUTO_INCREMENT,"
-				+ "acl_object_identity BIGINT NOT NULL,ACE_ORDER INT NOT NULL,"
-				+ "sid BIGINT NOT NULL,"
-				+ "mask INTEGER NOT NULL,"
-				+ "granting TINYINT NOT NULL,"
-				+ "audit_success TINYINT NOT NULL,"
-				+ "audit_failure TINYINT NOT NULL,"
-				+ "PRIMARY KEY (id),"
+		this.template.execute("CREATE TABLE acl_entry(" + "id BIGINT NOT NULL AUTO_INCREMENT,"
+				+ "acl_object_identity BIGINT NOT NULL,ACE_ORDER INT NOT NULL," + "sid BIGINT NOT NULL,"
+				+ "mask INTEGER NOT NULL," + "granting TINYINT NOT NULL," + "audit_success TINYINT NOT NULL,"
+				+ "audit_failure TINYINT NOT NULL," + "PRIMARY KEY (id),"
 				+ "CONSTRAINT UNIQUE_UK_4 UNIQUE(acl_object_identity,ACE_ORDER),"
 				+ "CONSTRAINT FOREIGN_FK_4 FOREIGN KEY(acl_object_identity) REFERENCES acl_object_identity(id),"
 				+ "CONSTRAINT FOREIGN_FK_5 FOREIGN KEY(sid) REFERENCES acl_sid(id));");
@@ -137,8 +121,7 @@ public class DataSourcePopulator implements InitializingBean {
 	}
 
 	private void grantPermissions(int albumId, String recipientUsername, Permission permission) {
-		AclImpl acl = (AclImpl) this.mutableAclService
-				.readAclById(new ObjectIdentityImpl(Album.class, (long) albumId));
+		AclImpl acl = (AclImpl) this.mutableAclService.readAclById(new ObjectIdentityImpl(Album.class, (long) albumId));
 		acl.insertAce(acl.getEntries().size(), permission, new PrincipalSid(recipientUsername), true);
 		updateAclInTransaction(acl);
 	}
@@ -150,4 +133,5 @@ public class DataSourcePopulator implements InitializingBean {
 			return null;
 		});
 	}
+
 }
