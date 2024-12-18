@@ -24,3 +24,16 @@ jdbcMutableAclService.setSidIdentityQuery("SELECT @@IDENTITY");
 ```bash
 ./gradlew test
 ```
+You can review the application with test data by running
+
+```bash
+./gradlew bootTestRun
+```
+
+The (in memory) database with prepopulated test data can be inspected at
+
+http://localhost:8080/h2-console
+
+Make sure to use `jdbc:h2:mem:test` as JDBC URL
+
+For the remaining properties leave the defaults which are `sa` as User Name and an empty password.
