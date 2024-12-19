@@ -29,6 +29,18 @@ public class Album {
 		return String.format("Album[id=%d, artist='%s', title='%s']", id, artist, title);
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setArtist(String artist) {
+		this.artist = artist;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public Long getId() {
 		return id;
 	}
