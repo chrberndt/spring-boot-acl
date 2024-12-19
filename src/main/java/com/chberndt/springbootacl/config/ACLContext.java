@@ -69,8 +69,8 @@ public class ACLContext {
 		// see:
 		// https://stackoverflow.com/questions/54859029/spring-security-acl-object/56275135#56275135
 		// TODO: Dynamically disable for testing
-		jdbcMutableAclService.setClassIdentityQuery("SELECT @@IDENTITY");
-		jdbcMutableAclService.setSidIdentityQuery("SELECT @@IDENTITY");
+		// jdbcMutableAclService.setClassIdentityQuery("SELECT @@IDENTITY");
+		// jdbcMutableAclService.setSidIdentityQuery("SELECT @@IDENTITY");
 
 		// For PostgreSQL use: (not tested yet)
 		// see:
