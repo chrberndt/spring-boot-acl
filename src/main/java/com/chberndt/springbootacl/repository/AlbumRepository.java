@@ -23,7 +23,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 	@PostFilter("hasPermission(filterObject, 'READ')")
 	Album findById(long id);
 
-	// @PreAuthorize("hasPermission(#album, 'WRITE')")
+	@PreAuthorize("hasRole('USER')")
 	Album save(@Param("album") Album album);
 
 }
