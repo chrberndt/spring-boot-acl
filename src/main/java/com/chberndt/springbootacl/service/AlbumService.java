@@ -1,6 +1,7 @@
 package com.chberndt.springbootacl.service;
 
 import com.chberndt.springbootacl.entity.Album;
+import com.chberndt.springbootacl.exception.AlbumNotFoundException;
 import com.chberndt.springbootacl.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,10 @@ public class AlbumService {
 	public void deleteAlbum(long id) {
 		// TODO: remove corresponding objectIdentity and ACLs
 		repository.deleteById(id);
+	}
+
+	public Album getAlbum(long id) {
+		return repository.findById(id).orElseThrow(() -> new AlbumNotFoundException(id));
 	}
 
 	public List<Album> getAll() {
