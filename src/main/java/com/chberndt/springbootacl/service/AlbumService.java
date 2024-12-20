@@ -5,10 +5,13 @@ import com.chberndt.springbootacl.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.List;
 
 @Component
 public class AlbumService {
@@ -24,6 +27,7 @@ public class AlbumService {
 
 	private static final Logger log = LoggerFactory.getLogger(AlbumService.class);
 
+	@PreAuthorize("hasRole('USER')")
 	public Album createAlbum(Album album) {
 
 		log.info("createAlbum()");
@@ -45,10 +49,12 @@ public class AlbumService {
 	}
 
 	public void deleteAlbum(long id) {
-
 		// TODO: remove corresponding objectIdentity and ACLs
 		repository.deleteById(id);
+	}
 
+	public List<Album> getAll() {
+		return repository.findAll();
 	}
 
 	public long getAlbumCount() {
