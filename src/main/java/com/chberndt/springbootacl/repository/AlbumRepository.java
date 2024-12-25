@@ -6,6 +6,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+/**
+ * @author Christian Berndt
+ */
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
 	List<Album> findByArtist(String artist);
