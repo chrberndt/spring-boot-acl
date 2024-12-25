@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+/**
+ * @author Christian Berndt
+ */
 @Entity
 public class Album {
 
@@ -13,6 +16,8 @@ public class Album {
 	private Long id;
 
 	private String artist;
+
+	private String owner;
 
 	private String title;
 
@@ -26,7 +31,7 @@ public class Album {
 
 	@Override
 	public String toString() {
-		return String.format("Album[id=%d, artist='%s', title='%s']", id, artist, title);
+		return String.format("Album[id: %d, owner: %s, artist: '%s', title: '%s']", id, artist, owner, title);
 	}
 
 	public void setId(Long id) {
@@ -35,6 +40,10 @@ public class Album {
 
 	public void setArtist(String artist) {
 		this.artist = artist;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	public void setTitle(String title) {
@@ -47,6 +56,10 @@ public class Album {
 
 	public String getArtist() {
 		return artist;
+	}
+
+	public String getOwner() {
+		return owner;
 	}
 
 	public String getTitle() {

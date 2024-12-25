@@ -6,13 +6,14 @@ import com.chberndt.springbootacl.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -33,7 +34,9 @@ public class AlbumService {
 	private static final Logger log = LoggerFactory.getLogger(AlbumService.class);
 
 	@PreAuthorize("hasRole('USER')")
-	public Album createAlbum(Album album) {
+	public Album createAlbum(Principal principal, Album album) {
+
+		album.setOwner(principal.getName());
 
 		Album newAlbum = repository.save(album);
 
@@ -51,6 +54,8 @@ public class AlbumService {
 		return newAlbum;
 	}
 
+	@PreAuthorize("hasRole('USER')")
+	@PostAuthorize("returnObject.owner == authentication.name")
 	public void deleteAlbum(long id) {
 		// TODO: remove corresponding objectIdentity and ACLs
 		repository.deleteById(id);
@@ -68,9 +73,19 @@ public class AlbumService {
 		return repository.count();
 	}
 
-	@PreAuthorize("authenticated")
+	@PreAuthorize("hasRole('USER')")
 	public Album saveAlbum(Album newAlbum) {
 		return repository.save(newAlbum);
+	}
+
+	@PreAuthorize("hasRole('USER')")
+	@PostAuthorize("returnObject.owner == authentication.name")
+	public Album updateAlbum(long id, Album updatedAlbum) {
+		return repository.findById(id).map(album -> {
+			album.setArtist(updatedAlbum.getArtist());
+			album.setTitle(updatedAlbum.getTitle());
+			return repository.save(album);
+		}).orElseGet(() -> repository.save(updatedAlbum));
 	}
 
 	private void grantPermissions(long albumId, Sid sid, Permission permission) {

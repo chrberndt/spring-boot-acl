@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -49,7 +50,9 @@ public class AlbumSecurityTests {
 	@Test
 	@WithAnonymousUser
 	public void anonymousUser_shouldNot_createAlbum() {
-		assertThrows(AccessDeniedException.class, () -> service.createAlbum(new Album("Taylor Swift", "Reputation")));
+		assertThrows(AccessDeniedException.class,
+				() -> service.createAlbum(SecurityContextHolder.getContext().getAuthentication(),
+						new Album("Taylor Swift", "Reputation")));
 	}
 
 	@Test
@@ -67,10 +70,11 @@ public class AlbumSecurityTests {
 	@Test
 	@DirtiesContext
 	public void authenticatedUser_should_createAlbum() {
-		Album album = service.createAlbum(new Album("Taylor Swift", "Reputation"));
+		Album album = service.createAlbum(SecurityContextHolder.getContext().getAuthentication(),
+				new Album("Taylor Swift", "Reputation"));
 		assertThat(album).isNotNull();
 		assertThat(album.getId()).isEqualTo(11);
-		// TODO: assertThat album is owned by "user"
+		assertThat(album.getOwner()).isEqualTo("user");
 	}
 
 	@Test
@@ -81,6 +85,7 @@ public class AlbumSecurityTests {
 	@Test
 	public void authenticatedUser_should_deleteOwnedAlbum() {
 		// TODO: use random album 1-5
+		// TODO: assert that the corresponding ACLs have been removed
 	}
 
 	@Test
@@ -91,6 +96,7 @@ public class AlbumSecurityTests {
 	@Test
 	public void roleAdmin_should_deleteAnyAlbum() {
 		// TODO: use random album 1-10
+		// TODO: assert that the corresponding ACLs have been removed
 	}
 
 }

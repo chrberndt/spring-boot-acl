@@ -75,21 +75,21 @@ public class DataSourcePopulator implements InitializingBean {
 		SecurityContextHolder.getContext().setAuthentication(alicesToken);
 
 		// Insert some albums that belong to alice
-		albumService.createAlbum(new Album("Beastie Boys", "Licensed to Ill"));
-		albumService.createAlbum(new Album("Beastie Boys", "Paul's Boutique"));
-		albumService.createAlbum(new Album("Beastie Boys", "Check Your Head"));
-		albumService.createAlbum(new Album("Beastie Boys", "Ill Communication"));
-		albumService.createAlbum(new Album("Beastie Boys", "Hello Nasty"));
+		albumService.createAlbum(alicesToken, new Album("Beastie Boys", "Licensed to Ill"));
+		albumService.createAlbum(alicesToken, new Album("Beastie Boys", "Paul's Boutique"));
+		albumService.createAlbum(alicesToken, new Album("Beastie Boys", "Check Your Head"));
+		albumService.createAlbum(alicesToken, new Album("Beastie Boys", "Ill Communication"));
+		albumService.createAlbum(alicesToken, new Album("Beastie Boys", "Hello Nasty"));
 
 		// Set a user account that will own Taylor Swift albums
 		Authentication bobsToken = new UsernamePasswordAuthenticationToken("bob", "secret",
 				AuthorityUtils.createAuthorityList("ROLE_USER"));
 		SecurityContextHolder.getContext().setAuthentication(bobsToken);
-		albumService.createAlbum(new Album("Taylor Swift", "Taylor Swift"));
-		albumService.createAlbum(new Album("Taylor Swift", "Fearless"));
-		albumService.createAlbum(new Album("Taylor Swift", "Speak Now"));
-		albumService.createAlbum(new Album("Taylor Swift", "Red"));
-		albumService.createAlbum(new Album("Taylor Swift", "1989"));
+		albumService.createAlbum(bobsToken, new Album("Taylor Swift", "Taylor Swift"));
+		albumService.createAlbum(bobsToken, new Album("Taylor Swift", "Fearless"));
+		albumService.createAlbum(bobsToken, new Album("Taylor Swift", "Speak Now"));
+		albumService.createAlbum(bobsToken, new Album("Taylor Swift", "Red"));
+		albumService.createAlbum(bobsToken, new Album("Taylor Swift", "1989"));
 	}
 
 }

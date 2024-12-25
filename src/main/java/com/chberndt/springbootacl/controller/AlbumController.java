@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -32,8 +33,8 @@ public class AlbumController {
 	}
 
 	@PostMapping("/albums")
-	Album newAlbum(@RequestBody Album newAlbum) {
-		return service.createAlbum(newAlbum);
+	Album newAlbum(@RequestBody Album newAlbum, Principal principal) {
+		return service.createAlbum(principal, newAlbum);
 	}
 
 	@GetMapping("/albums/{id}")
@@ -42,16 +43,10 @@ public class AlbumController {
 	}
 
 	@PutMapping("/albums/{id}")
-	Album replaceAlbum(@RequestBody Album newAlbum, @PathVariable Long id) {
+	Album replaceAlbum(@RequestBody Album updatedAlbum, @PathVariable Long id) {
 		log.info("replaceAlbum()");
-		log.info("album: " + newAlbum.toString());
-		return repository.findById(id).map(album -> {
-			album.setArtist(newAlbum.getArtist());
-			album.setTitle(newAlbum.getTitle());
-			return repository.save(album);
-		}).orElseGet(() -> {
-			return repository.save(newAlbum);
-		});
+		log.info("album: " + updatedAlbum.toString());
+		return service.updateAlbum(id, updatedAlbum);
 	}
 
 	@DeleteMapping("/albums/{id}")
