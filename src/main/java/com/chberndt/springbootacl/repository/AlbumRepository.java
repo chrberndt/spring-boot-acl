@@ -2,7 +2,6 @@ package com.chberndt.springbootacl.repository;
 
 import com.chberndt.springbootacl.entity.Album;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
