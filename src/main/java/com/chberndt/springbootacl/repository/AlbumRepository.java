@@ -15,6 +15,4 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
 	List<Album> findByTitle(String title);
 
-	Album save(@Param("album") Album album);
-
 }

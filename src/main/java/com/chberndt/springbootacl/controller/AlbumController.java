@@ -3,6 +3,8 @@ package com.chberndt.springbootacl.controller;
 import com.chberndt.springbootacl.entity.Album;
 import com.chberndt.springbootacl.repository.AlbumRepository;
 import com.chberndt.springbootacl.service.AlbumService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
  */
 @RestController
 public class AlbumController {
+
+	private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
 
 	private final AlbumRepository repository;
 
@@ -29,7 +33,7 @@ public class AlbumController {
 
 	@PostMapping("/albums")
 	Album newAlbum(@RequestBody Album newAlbum) {
-		return repository.save(newAlbum);
+		return service.createAlbum(newAlbum);
 	}
 
 	@GetMapping("/albums/{id}")
@@ -39,6 +43,8 @@ public class AlbumController {
 
 	@PutMapping("/albums/{id}")
 	Album replaceAlbum(@RequestBody Album newAlbum, @PathVariable Long id) {
+		log.info("replaceAlbum()");
+		log.info("album: " + newAlbum.toString());
 		return repository.findById(id).map(album -> {
 			album.setArtist(newAlbum.getArtist());
 			album.setTitle(newAlbum.getTitle());

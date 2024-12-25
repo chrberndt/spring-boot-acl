@@ -6,6 +6,7 @@ import com.chberndt.springbootacl.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
@@ -31,10 +32,8 @@ public class AlbumService {
 
 	private static final Logger log = LoggerFactory.getLogger(AlbumService.class);
 
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("authenticated")
 	public Album createAlbum(Album album) {
-
-		log.info("createAlbum()");
 
 		Album newAlbum = repository.save(album);
 
@@ -67,6 +66,11 @@ public class AlbumService {
 
 	public long getAlbumCount() {
 		return repository.count();
+	}
+
+	@PreAuthorize("authenticated")
+	public Album saveAlbum(Album newAlbum) {
+		return repository.save(newAlbum);
 	}
 
 	private void grantPermissions(long albumId, Sid sid, Permission permission) {
