@@ -3,9 +3,11 @@ package com.chberndt.springbootacl.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -25,7 +27,7 @@ public class SecurityConfiguration {
 		http.authorizeHttpRequests((requests) -> requests.requestMatchers(HttpMethod.GET, "/albums", "/albums/*")
 			.permitAll()
 			.anyRequest()
-			.authenticated());
+			.authenticated()).csrf(AbstractHttpConfigurer::disable).httpBasic(Customizer.withDefaults());
 
 		return http.build();
 	}
