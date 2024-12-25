@@ -14,6 +14,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
+/**
+ * @author Christian Berndt
+ */
 @Component
 public class AlbumService {
 
