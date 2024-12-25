@@ -32,7 +32,7 @@ public class AlbumService {
 
 	private static final Logger log = LoggerFactory.getLogger(AlbumService.class);
 
-	@PreAuthorize("authenticated")
+	@PreAuthorize("hasRole('USER')")
 	public Album createAlbum(Album album) {
 
 		Album newAlbum = repository.save(album);
