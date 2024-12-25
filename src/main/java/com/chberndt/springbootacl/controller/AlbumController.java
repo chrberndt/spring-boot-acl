@@ -1,7 +1,6 @@
 package com.chberndt.springbootacl.controller;
 
 import com.chberndt.springbootacl.entity.Album;
-import com.chberndt.springbootacl.exception.AlbumNotFoundException;
 import com.chberndt.springbootacl.repository.AlbumRepository;
 import com.chberndt.springbootacl.service.AlbumService;
 import org.springframework.web.bind.annotation.*;
