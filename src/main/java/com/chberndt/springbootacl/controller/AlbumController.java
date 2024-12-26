@@ -1,7 +1,6 @@
 package com.chberndt.springbootacl.controller;
 
 import com.chberndt.springbootacl.entity.Album;
-import com.chberndt.springbootacl.repository.AlbumRepository;
 import com.chberndt.springbootacl.service.AlbumService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +17,9 @@ public class AlbumController {
 
 	private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
 
-	private final AlbumRepository repository;
-
 	private final AlbumService service;
 
-	public AlbumController(AlbumRepository albumRepository, AlbumService albumService) {
-		this.repository = albumRepository;
+	public AlbumController(AlbumService albumService) {
 		this.service = albumService;
 	}
 
@@ -43,15 +39,13 @@ public class AlbumController {
 	}
 
 	@PutMapping("/albums/{id}")
-	Album replaceAlbum(@RequestBody Album updatedAlbum, @PathVariable Long id) {
-		log.info("replaceAlbum()");
-		log.info("album: " + updatedAlbum.toString());
-		return service.updateAlbum(id, updatedAlbum);
+	Album replaceAlbum(@RequestBody Album updatedAlbum, @PathVariable Long id, Principal principal) {
+		return service.updateAlbum(id, principal, updatedAlbum);
 	}
 
 	@DeleteMapping("/albums/{id}")
-	void deleteAlbum(@PathVariable Long id) {
-		repository.deleteById(id);
+	void deleteAlbum(@PathVariable Long id, Principal principal) {
+		service.deleteAlbum(id, principal);
 	}
 
 }

@@ -6,7 +6,7 @@ import com.chberndt.springbootacl.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
@@ -55,10 +55,12 @@ public class AlbumService {
 	}
 
 	@PreAuthorize("hasRole('USER')")
-	@PostAuthorize("returnObject.owner == authentication.name")
-	public void deleteAlbum(long id) {
+	public void deleteAlbum(long id, Principal principal) {
 		// TODO: remove corresponding objectIdentity and ACLs
-		repository.deleteById(id);
+		repository.findByIdAndOwner(id, principal.getName()).map(album -> {
+			repository.deleteById(id);
+			return album;
+		}).orElseThrow(() -> new AccessDeniedException(null));
 	}
 
 	public Album getAlbum(long id) {
@@ -79,13 +81,12 @@ public class AlbumService {
 	}
 
 	@PreAuthorize("hasRole('USER')")
-	@PostAuthorize("returnObject.owner == authentication.name")
-	public Album updateAlbum(long id, Album updatedAlbum) {
-		return repository.findById(id).map(album -> {
+	public Album updateAlbum(long id, Principal principal, Album updatedAlbum) {
+		return repository.findByIdAndOwner(id, principal.getName()).map(album -> {
 			album.setArtist(updatedAlbum.getArtist());
 			album.setTitle(updatedAlbum.getTitle());
 			return repository.save(album);
-		}).orElseGet(() -> repository.save(updatedAlbum));
+		}).orElseThrow(() -> new AccessDeniedException(null));
 	}
 
 	private void grantPermissions(long albumId, Sid sid, Permission permission) {
