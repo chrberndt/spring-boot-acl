@@ -36,13 +36,20 @@ public class SecurityConfiguration {
 	public InMemoryUserDetailsManager userDetailsService() {
 
 		UserDetails admin = User.withUsername("admin")
-			.password(passwordEncoder().encode("test"))
+			.password(passwordEncoder().encode("secret"))
 			.roles("ADMIN")
 			.build();
 
-		UserDetails user = User.withUsername("user").password(passwordEncoder().encode("test")).roles("USER").build();
+		UserDetails alice = User.withUsername("alice")
+			.password(passwordEncoder().encode("secret"))
+			.roles("USER")
+			.build();
 
-		return new InMemoryUserDetailsManager(admin, user);
+		UserDetails bob = User.withUsername("bob").password(passwordEncoder().encode("secret")).roles("USER").build();
+
+		UserDetails user = User.withUsername("user").password(passwordEncoder().encode("secret")).roles("USER").build();
+
+		return new InMemoryUserDetailsManager(admin, alice, bob, user);
 	}
 
 	@Bean
