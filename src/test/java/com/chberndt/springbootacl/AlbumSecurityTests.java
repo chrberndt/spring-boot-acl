@@ -26,6 +26,8 @@ public class AlbumSecurityTests {
 	@Autowired
 	private AlbumService service;
 
+	private final String MODIFIED = "MODIFIED";
+
 	@Test
 	void contextLoads() throws Exception {
 		assertThat(service).isNotNull();
@@ -58,13 +60,18 @@ public class AlbumSecurityTests {
 	@Test
 	@WithAnonymousUser
 	public void anonymousUser_shouldNot_updateAlbum() {
-		// TODO
+		Album album = service.getAlbum(1);
+		album.setArtist(MODIFIED);
+		album.setOwner(MODIFIED);
+		assertThrows(AccessDeniedException.class,
+				() -> service.updateAlbum(1, SecurityContextHolder.getContext().getAuthentication(), album));
 	}
 
 	@Test
 	@WithAnonymousUser
 	public void anonymousUser_shouldNot_deleteAlbum() {
-		// TODO
+		assertThrows(AccessDeniedException.class,
+				() -> service.deleteAlbum(1, SecurityContextHolder.getContext().getAuthentication()));
 	}
 
 	@Test
@@ -78,14 +85,49 @@ public class AlbumSecurityTests {
 	}
 
 	@Test
+	@WithMockUser("alice")
+	@DirtiesContext
 	public void authenticatedUser_should_updateOwnedAlbum() {
-		// TODO: use random album 1-5
+		// TODO: look up album by owner, then use random album
+		Album album = service.getAlbum(1);
+		album.setId(10L);
+		album.setArtist(MODIFIED);
+		album.setOwner(MODIFIED);
+		Album modifiedAlbum = service.updateAlbum(1, SecurityContextHolder.getContext().getAuthentication(), album);
+		assertThat(modifiedAlbum).isNotNull();
+		assertThat(modifiedAlbum.getId()).isEqualTo(1);
+		assertThat(modifiedAlbum.getOwner()).isEqualTo("alice");
+		assertThat(modifiedAlbum.getArtist()).isEqualTo(MODIFIED);
+
 	}
 
 	@Test
+	@WithMockUser("alice")
+	@DirtiesContext
 	public void authenticatedUser_should_deleteOwnedAlbum() {
 		// TODO: use random album 1-5
 		// TODO: assert that the corresponding ACLs have been removed
+		service.deleteAlbum(1, SecurityContextHolder.getContext().getAuthentication());
+		assertThat(service.getAlbumCount()).isEqualTo(9);
+	}
+
+	@Test
+	@WithMockUser("alice")
+	public void authenticatedUser_shouldNot_updateForeignAlbum() {
+		// TODO: use random album 6-10
+		Album album = service.getAlbum(6);
+		album.setArtist(MODIFIED);
+		album.setOwner(MODIFIED);
+		assertThrows(AccessDeniedException.class,
+				() -> service.updateAlbum(6, SecurityContextHolder.getContext().getAuthentication(), album));
+	}
+
+	@Test
+	@WithMockUser("alice")
+	public void authenticatedUser_shouldNot_deleteForeignAlbum() {
+		// TODO: use random album 6-10
+		assertThrows(AccessDeniedException.class,
+				() -> service.deleteAlbum(6, SecurityContextHolder.getContext().getAuthentication()));
 	}
 
 	@Test
