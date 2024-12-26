@@ -3,15 +3,13 @@ package com.chberndt.springbootacl.repository;
 import com.chberndt.springbootacl.entity.Album;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Christian Berndt
  */
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-	List<Album> findByArtist(String artist);
-
-	List<Album> findByTitle(String title);
+	Optional<Album> findByIdAndOwner(long id, String owner);
 
 }
