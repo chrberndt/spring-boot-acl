@@ -31,7 +31,7 @@ public class Album {
 
 	@Override
 	public String toString() {
-		return String.format("Album[id: %d, owner: %s, artist: '%s', title: '%s']", id, artist, owner, title);
+		return String.format("Album[id: %d, owner: %s, artist: '%s', title: '%s']", id, owner, artist, title);
 	}
 
 	public void setId(Long id) {
