@@ -28,6 +28,11 @@ public class AlbumController {
 		return service.getAll();
 	}
 
+	@GetMapping("/albums/count")
+	long count() {
+		return service.getAlbumCount();
+	}
+
 	@PostMapping("/albums")
 	Album newAlbum(@RequestBody Album newAlbum, Principal principal) {
 		return service.createAlbum(principal, newAlbum);
@@ -39,13 +44,13 @@ public class AlbumController {
 	}
 
 	@PutMapping("/albums/{id}")
-	Album replaceAlbum(@RequestBody Album updatedAlbum, @PathVariable Long id, Principal principal) {
-		return service.updateAlbum(id, principal, updatedAlbum);
+	Album replaceAlbum(@RequestBody Album album, @PathVariable Long id) {
+		return service.updateAlbum(id, album);
 	}
 
 	@DeleteMapping("/albums/{id}")
-	void deleteAlbum(@PathVariable Long id, Principal principal) {
-		service.deleteAlbum(id, principal);
+	void deleteAlbum(@PathVariable Long id) {
+		service.deleteAlbum(id);
 	}
 
 }

@@ -5,12 +5,19 @@ import com.chberndt.springbootacl.exception.AlbumNotFoundException;
 import com.chberndt.springbootacl.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.domain.*;
-import org.springframework.security.acls.model.*;
+import org.springframework.security.acls.domain.AclImpl;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.acls.model.Sid;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.security.Principal;
@@ -22,14 +29,17 @@ import java.util.List;
 @Component
 public class AlbumService {
 
-	@Autowired
 	TransactionTemplate tt;
 
-	@Autowired
-	private MutableAclService mutableAclService;
+	private final MutableAclService mutableAclService;
 
-	@Autowired
-	private AlbumRepository repository;
+	private final AlbumRepository repository;
+
+	public AlbumService(TransactionTemplate tt, MutableAclService mutableAclService, AlbumRepository albumRepository) {
+		this.tt = tt;
+		this.mutableAclService = mutableAclService;
+		this.repository = albumRepository;
+	}
 
 	private static final Logger log = LoggerFactory.getLogger(AlbumService.class);
 
@@ -54,13 +64,17 @@ public class AlbumService {
 		return newAlbum;
 	}
 
-	@PreAuthorize("hasRole('USER')")
-	public void deleteAlbum(long id, Principal principal) {
-		// TODO: remove corresponding objectIdentity and ACLs
-		repository.findByIdAndOwner(id, principal.getName()).map(album -> {
-			repository.deleteById(id);
-			return album;
-		}).orElseThrow(() -> new AccessDeniedException(null));
+	@Transactional // rolls back the transaction if post-authorization fails
+	@PostAuthorize("returnObject.owner == authentication.name || hasRole('ADMIN')")
+	public Album deleteAlbum(long id) {
+
+		Album album = repository.findById(id).orElseThrow(() -> new AlbumNotFoundException(id));
+		ObjectIdentity objectIdentity = new ObjectIdentityImpl(Album.class, album.getId());
+		mutableAclService.deleteAcl(objectIdentity, true);
+		repository.delete(album);
+
+		return album;
+
 	}
 
 	public Album getAlbum(long id) {
@@ -75,18 +89,16 @@ public class AlbumService {
 		return repository.count();
 	}
 
-	@PreAuthorize("hasRole('USER')")
-	public Album saveAlbum(Album newAlbum) {
-		return repository.save(newAlbum);
-	}
+	@Transactional // rolls back the transaction if post-authorization fails
+	@PostAuthorize("returnObject.owner == authentication.name || hasRole('ADMIN')")
+	public Album updateAlbum(long id, Album updatedAlbum) {
 
-	@PreAuthorize("hasRole('USER')")
-	public Album updateAlbum(long id, Principal principal, Album updatedAlbum) {
-		return repository.findByIdAndOwner(id, principal.getName()).map(album -> {
-			album.setArtist(updatedAlbum.getArtist());
-			album.setTitle(updatedAlbum.getTitle());
-			return repository.save(album);
-		}).orElseThrow(() -> new AccessDeniedException(null));
+		Album album = repository.findById(id).orElseThrow(() -> new AlbumNotFoundException(id));
+
+		updatedAlbum.setOwner(album.getOwner());
+		updatedAlbum.setId(album.getId());
+
+		return repository.save(updatedAlbum);
 	}
 
 	private void grantPermissions(long albumId, Sid sid, Permission permission) {
