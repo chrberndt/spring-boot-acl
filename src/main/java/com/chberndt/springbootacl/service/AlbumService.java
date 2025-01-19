@@ -47,11 +47,9 @@ public class AlbumService {
 	public Album createAlbum(Principal principal, Album album) {
 
 		album.setOwner(principal.getName());
-
 		Album newAlbum = repository.save(album);
 
 		long albumId = newAlbum.getId();
-
 		final ObjectIdentity objectIdentity = new ObjectIdentityImpl(Album.class, albumId);
 
 		this.tt.execute((arg0) -> {
@@ -110,7 +108,6 @@ public class AlbumService {
 	private void updateAclInTransaction(final MutableAcl acl) {
 		this.tt.execute((arg0) -> {
 			this.mutableAclService.updateAcl(acl);
-
 			return null;
 		});
 	}
